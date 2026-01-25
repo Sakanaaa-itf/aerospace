@@ -1,0 +1,79 @@
+# =============================================================================
+# AeroSpace ローカル設定サンプル
+# =============================================================================
+# このファイルは端末固有のワークスペース割り当て設定のサンプルです。
+#
+# セットアップ方法:
+#   1. このファイルをコピー: cp aerospace.toml.local.example aerospace.toml.local
+#   2. aerospace.toml.local を編集して、この端末に合わせた設定に変更
+#   3. build-config.sh を実行して設定を反映
+#
+# 注意:
+#   - aerospace.toml.local は Git 管理外です（コミットしないでください）
+#   - アプリIDの確認: osascript -e 'id of app "アプリ名"'
+# =============================================================================
+
+# Chrome → workspace 1
+[[on-window-detected]]
+if.app-id = 'com.google.Chrome'
+run = 'move-node-to-workspace 1'
+
+# VS Code → workspace 2
+[[on-window-detected]]
+if.app-id = 'com.microsoft.VSCode'
+run = 'move-node-to-workspace 2'
+
+# Lightroom Classic → workspace 3
+[[on-window-detected]]
+if.app-id = 'com.adobe.LightroomClassicCC7'
+run = 'move-node-to-workspace 3'
+
+# Adobe Bridge → workspace 3
+[[on-window-detected]]
+if.app-id = 'com.adobe.bridge'
+run = 'move-node-to-workspace 3'
+
+# Finder → workspace 4
+[[on-window-detected]]
+if.app-id = 'com.apple.finder'
+run = 'move-node-to-workspace 4'
+
+# Slack → workspace 5
+[[on-window-detected]]
+if.app-id = 'com.tinyspeck.slackmacgap'
+run = 'move-node-to-workspace 5'
+
+# Discord → workspace 5
+[[on-window-detected]]
+if.app-id = 'com.hnc.Discord'
+run = 'move-node-to-workspace 5'
+
+# LINE → workspace 5
+[[on-window-detected]]
+if.app-id = 'jp.naver.line.mac'
+run = 'move-node-to-workspace 5'
+
+# Mail → workspace 5
+[[on-window-detected]]
+if.app-id = 'com.apple.mail'
+run = 'move-node-to-workspace 5'
+
+# Microsoft Teams → workspace 5
+[[on-window-detected]]
+if.app-id = 'com.microsoft.teams2'
+run = 'move-node-to-workspace 5'
+
+# Apple Music → workspace 6
+[[on-window-detected]]
+if.app-id = 'com.apple.Music'
+run = 'move-node-to-workspace 6'
+
+# YouTube Music (Chrome App) → workspace 6
+[[on-window-detected]]
+if.app-id = 'com.google.Chrome.app.cinhimbnkkaeohfgghhklpknlkffjgod'
+run = 'move-node-to-workspace 6'
+
+# Terminal → workspace 7
+[[on-window-detected]]
+if.app-id = 'com.apple.Terminal'
+run = 'move-node-to-workspace 7'

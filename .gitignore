@@ -1,0 +1,8 @@
+# 生成される最終設定ファイル（ビルドスクリプトで生成されるため）
+aerospace.toml
+
+# 端末固有のローカル設定（各端末で個別に作成するため）
+aerospace.toml.local
+
+# macOS
+.DS_Store
