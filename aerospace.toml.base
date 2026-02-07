@@ -45,31 +45,7 @@ automatically-unhide-macos-hidden-apps = true
 # even when they are invisible.
 # This config version is only available since 'config-version = 2'
 # Fallback value (if you omit the key): persistent-workspaces = []
-persistent-workspaces = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C",
-                         "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
-                         "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
-
-# Keep 1-9 on main, and reserve A-I as a mirrored workspace bank for secondary monitor.
-# If secondary monitor is disconnected, A-I fall back to main.
-[workspace-to-monitor-force-assignment]
-    1 = 'main'
-    2 = 'main'
-    3 = 'main'
-    4 = 'main'
-    5 = 'main'
-    6 = 'main'
-    7 = 'main'
-    8 = 'main'
-    9 = 'main'
-    A = ['secondary', 'main']
-    B = ['secondary', 'main']
-    C = ['secondary', 'main']
-    D = ['secondary', 'main']
-    E = ['secondary', 'main']
-    F = ['secondary', 'main']
-    G = ['secondary', 'main']
-    H = ['secondary', 'main']
-    I = ['secondary', 'main']
+persistent-workspaces = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
 # A callback that runs every time binding mode changes
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -139,16 +115,9 @@ on-mode-changed = []
     alt-j = 'focus down'
     alt-k = 'focus up'
     alt-l = 'focus right'
-    alt-q = 'focus-monitor main'
-    alt-w = 'focus-monitor secondary'
     # Cycle through windows in the current workspace (including floating)
     alt-leftSquareBracket = 'focus --boundaries-action wrap-around-the-workspace dfs-prev'
     alt-rightSquareBracket = 'focus --boundaries-action wrap-around-the-workspace dfs-next'
-    # Move focus across monitors (wrap around at edges)
-    alt-ctrl-h = 'focus-monitor --wrap-around left'
-    alt-ctrl-j = 'focus-monitor --wrap-around down'
-    alt-ctrl-k = 'focus-monitor --wrap-around up'
-    alt-ctrl-l = 'focus-monitor --wrap-around right'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move
     alt-shift-h = 'move left'
@@ -165,17 +134,20 @@ on-mode-changed = []
     alt-minus = 'resize smart -50'
     alt-equal = 'resize smart +50'
 
-    # Monitor-aware workspace switching (main: 1-9, secondary: A-I)
-    alt-1 = 'exec-and-forget ~/.config/aerospace/scripts/smart-workspace.sh 1'
-    alt-2 = 'exec-and-forget ~/.config/aerospace/scripts/smart-workspace.sh 2'
-    alt-3 = 'exec-and-forget ~/.config/aerospace/scripts/smart-workspace.sh 3'
-    alt-4 = 'exec-and-forget ~/.config/aerospace/scripts/smart-workspace.sh 4'
-    alt-5 = 'exec-and-forget ~/.config/aerospace/scripts/smart-workspace.sh 5'
-    alt-6 = 'exec-and-forget ~/.config/aerospace/scripts/smart-workspace.sh 6'
-    alt-7 = 'exec-and-forget ~/.config/aerospace/scripts/smart-workspace.sh 7'
-    alt-8 = 'exec-and-forget ~/.config/aerospace/scripts/smart-workspace.sh 8'
-    alt-9 = 'exec-and-forget ~/.config/aerospace/scripts/smart-workspace.sh 9'
+    # Monitor focus
+    alt-q = 'focus-monitor main'
+    alt-w = 'focus-monitor secondary'
 
+    # Workspace switching for main monitor
+    alt-1 = 'workspace 1'
+    alt-2 = 'workspace 2'
+    alt-3 = ['workspace 3', 'focus --boundaries-action wrap-around-the-workspace dfs-next']
+    alt-4 = 'workspace 4'
+    alt-5 = 'workspace 5'
+    alt-6 = 'workspace 6'
+    alt-7 = 'workspace 7'
+    alt-8 = 'workspace 8'
+    alt-9 = 'workspace 9'
     # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
     alt-shift-1 = 'move-node-to-workspace 1'
     alt-shift-2 = 'move-node-to-workspace 2'
@@ -189,8 +161,8 @@ on-mode-changed = []
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
     alt-tab = 'workspace-back-and-forth'
-    # Move focused window to next monitor and keep mirrored workspace slot (1<->A, ...)
-    alt-shift-tab = 'exec-and-forget ~/.config/aerospace/scripts/move-window-to-next-monitor-with-workspace.sh'
+    # Move focused window to next monitor (to main: respect app workspace assignment)
+    alt-shift-tab = 'exec-and-forget ~/.config/aerospace/scripts/move-window-to-next-monitor-or-main-workspace.sh'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#mode
     alt-shift-semicolon = 'mode service'
