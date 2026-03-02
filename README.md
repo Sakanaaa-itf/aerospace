@@ -11,6 +11,9 @@
 ├── aerospace.toml.local.example # ローカル設定のサンプル
 ├── aerospace.toml               # 生成される最終設定ファイル
 ├── build-config.sh              # 設定ビルドスクリプト
+├── scripts/
+│   ├── move-window-to-next-monitor-or-main-workspace.sh
+│   └── restore-windows-on-monitor-detach.sh
 └── README.md                    # このファイル
 ```
 
@@ -74,6 +77,23 @@
 - `aerospace.toml` を生成
 - AeroSpaceが起動中の場合は自動的に再読み込み
 
+### サブモニタ取り外し時の自動復帰
+
+この設定では、サブモニタ運用用のワークスペースとして `workspace 10` を使います。
+
+- サブモニタ接続中は `workspace 10` をそのまま利用
+- サブモニタが無い状態では、`workspace 10` 上のウィンドウをアプリごとの規定ワークスペースへ自動で戻す
+- 規定ワークスペースは `[[on-window-detected]]` の `move-node-to-workspace` を参照（`local` を優先し、無ければ `base` を参照）
+
+実行トリガー:
+- `after-startup-command` で監視スクリプトを起動
+- `on-focused-monitor-changed` でも同スクリプトを呼び、モニタ変更後の復帰漏れを防止
+
+手動実行（必要な場合）:
+```bash
+~/.config/aerospace/scripts/restore-windows-on-monitor-detach.sh
+```
+
 ## ワークスペース割り当ての例
 
 `aerospace.toml.local` の例：
@@ -127,7 +147,15 @@ osascript -e 'id of app "Google Chrome"'
    ~/.config/aerospace/build-config.sh
    ```
 
-2. AeroSpaceを手動で再起動
+2. AeroSpaceを再読み込み：
+   ```bash
+   aerospace reload-config
+   ```
+
+3. サブモニタ取り外し時の復帰確認：
+   ```bash
+   aerospace list-windows --workspace 10 --monitor all --format '%{window-id}|%{app-name}|%{app-bundle-id}|%{workspace}|%{monitor-id}'
+   ```
 
 ### ローカル設定がない状態でビルドしても問題ない？
 
