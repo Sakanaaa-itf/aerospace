@@ -14,11 +14,13 @@ if [[ -z "$AEROSPACE_BIN" ]]; then
   exit 0
 fi
 
-CONFIG_FILE="${HOME}/.config/aerospace/aerospace.toml.local"
+LOCAL_CONFIG_FILE="${HOME}/.config/aerospace/aerospace.toml.local"
+BASE_CONFIG_FILE="${HOME}/.config/aerospace/aerospace.toml.base"
 
-lookup_app_workspace() {
-  local app_id="$1"
-  if [[ -z "$app_id" || ! -f "$CONFIG_FILE" ]]; then
+lookup_app_workspace_in_file() {
+  local config_file="$1"
+  local app_id="$2"
+  if [[ -z "$app_id" || ! -f "$config_file" ]]; then
     return 1
   fi
   awk -v app_id="$app_id" '
@@ -35,31 +37,50 @@ lookup_app_workspace() {
         if (b[2] != "") { print b[2]; exit 0 }
       }
     }
-  ' "$CONFIG_FILE"
+  ' "$config_file"
+}
+
+lookup_app_workspace() {
+  local app_id="$1"
+  local workspace=""
+
+  workspace="$(lookup_app_workspace_in_file "$LOCAL_CONFIG_FILE" "$app_id" || true)"
+  if [[ -n "$workspace" ]]; then
+    printf '%s\n' "$workspace"
+    return 0
+  fi
+
+  workspace="$(lookup_app_workspace_in_file "$BASE_CONFIG_FILE" "$app_id" || true)"
+  if [[ -n "$workspace" ]]; then
+    printf '%s\n' "$workspace"
+    return 0
+  fi
+
+  return 1
 }
 
 window_monitor_id_any() {
   local candidate_id="$1"
-  "$AEROSPACE_BIN" list-windows --monitor all --format $'%{window-id}\t%{monitor-id}' 2>/dev/null \
-    | awk -F '\t' -v id="$candidate_id" '$1 == id { print $2; exit }'
+  "$AEROSPACE_BIN" list-windows --monitor all --format '%{window-id}|%{monitor-id}' 2>/dev/null \
+    | awk -F '|' -v id="$candidate_id" '$1 == id { print $2; exit }'
 }
 
-focused_monitor_info="$("$AEROSPACE_BIN" list-monitors --focused --format $'%{monitor-id}\t%{monitor-is-main}' 2>/dev/null || true)"
+focused_monitor_info="$("$AEROSPACE_BIN" list-monitors --focused --format '%{monitor-id}|%{monitor-is-main}' 2>/dev/null || true)"
 if [[ -z "$focused_monitor_info" ]]; then
   exit 0
 fi
-IFS=$'\t' read -r focused_monitor_id focused_monitor_is_main <<<"$focused_monitor_info"
+IFS='|' read -r focused_monitor_id focused_monitor_is_main <<<"$focused_monitor_info"
 if [[ -z "$focused_monitor_id" ]]; then
   exit 0
 fi
 
 target_monitor_id=""
-while IFS=$'\t' read -r monitor_id monitor_name; do
+while IFS='|' read -r monitor_id monitor_name; do
   if [[ -n "$monitor_id" && "$monitor_id" != "$focused_monitor_id" ]]; then
     target_monitor_id="$monitor_id"
     break
   fi
-done < <("$AEROSPACE_BIN" list-monitors --format $'%{monitor-id}\t%{monitor-name}' 2>/dev/null || true)
+done < <("$AEROSPACE_BIN" list-monitors --format '%{monitor-id}|%{monitor-name}' 2>/dev/null || true)
 
 if [[ -z "$target_monitor_id" ]]; then
   exit 0
@@ -70,8 +91,8 @@ if [[ -z "$target_visible_workspace" ]]; then
   exit 0
 fi
 
-window_info="$("$AEROSPACE_BIN" list-windows --focused --format $'%{window-id}\t%{app-bundle-id}' 2>/dev/null || true)"
-IFS=$'\t' read -r focused_window_id focused_app_id <<<"$window_info"
+window_info="$("$AEROSPACE_BIN" list-windows --focused --format '%{window-id}|%{app-bundle-id}' 2>/dev/null || true)"
+IFS='|' read -r focused_window_id focused_app_id <<<"$window_info"
 
 if [[ -z "$focused_app_id" ]]; then
   focused_app_id="$(osascript -e 'tell application "System Events" to get bundle identifier of first process whose frontmost is true' 2>/dev/null || true)"
@@ -82,8 +103,8 @@ if [[ -n "$focused_window_id" ]]; then
   candidate_ids+="${focused_window_id}"$'\n'
 fi
 if [[ -n "$focused_app_id" ]]; then
-  candidate_ids+="$("$AEROSPACE_BIN" list-windows --monitor all --app-bundle-id "$focused_app_id" --format $'%{window-id}\t%{monitor-id}' 2>/dev/null \
-    | awk -F '\t' -v monitor_id="$focused_monitor_id" '$2 == monitor_id { print $1 }')"$'\n'
+  candidate_ids+="$("$AEROSPACE_BIN" list-windows --monitor all --app-bundle-id "$focused_app_id" --format '%{window-id}|%{monitor-id}' 2>/dev/null \
+    | awk -F '|' -v monitor_id="$focused_monitor_id" '$2 == monitor_id { print $1 }')"$'\n'
 fi
 
 if [[ -z "${candidate_ids//$'\n'/}" ]]; then
