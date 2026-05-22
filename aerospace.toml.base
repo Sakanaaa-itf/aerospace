@@ -143,16 +143,19 @@ on-mode-changed = []
     alt-q = 'focus-monitor main'
     alt-w = 'focus-monitor secondary'
 
-    # Workspace switching for main monitor
-    alt-1 = 'workspace 1'
-    alt-2 = 'workspace 2'
-    alt-3 = ['workspace 3', 'focus --boundaries-action wrap-around-the-workspace dfs-next']
-    alt-4 = 'workspace 4'
-    alt-5 = 'workspace 5'
-    alt-6 = 'workspace 6'
-    alt-7 = 'workspace 7'
-    alt-8 = 'workspace 8'
-    alt-9 = 'workspace 9'
+    # Workspace switching (keep non-focused monitor workspace as-is)
+    alt-1 = 'exec-and-forget ~/.config/aerospace/scripts/switch-workspace-focused-monitor-only.sh 1'
+    alt-2 = 'exec-and-forget ~/.config/aerospace/scripts/switch-workspace-focused-monitor-only.sh 2'
+    alt-3 = [
+        'exec-and-forget ~/.config/aerospace/scripts/switch-workspace-focused-monitor-only.sh 3',
+        'focus --boundaries-action wrap-around-the-workspace dfs-next',
+    ]
+    alt-4 = 'exec-and-forget ~/.config/aerospace/scripts/switch-workspace-focused-monitor-only.sh 4'
+    alt-5 = 'exec-and-forget ~/.config/aerospace/scripts/switch-workspace-focused-monitor-only.sh 5'
+    alt-6 = 'exec-and-forget ~/.config/aerospace/scripts/switch-workspace-focused-monitor-only.sh 6'
+    alt-7 = 'exec-and-forget ~/.config/aerospace/scripts/switch-workspace-focused-monitor-only.sh 7'
+    alt-8 = 'exec-and-forget ~/.config/aerospace/scripts/switch-workspace-focused-monitor-only.sh 8'
+    alt-9 = 'exec-and-forget ~/.config/aerospace/scripts/switch-workspace-focused-monitor-only.sh 9'
     # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
     alt-shift-1 = 'move-node-to-workspace 1'
     alt-shift-2 = 'move-node-to-workspace 2'
@@ -191,4 +194,9 @@ on-mode-changed = []
 # Codex is fixed globally (all machines) to workspace 2
 [[on-window-detected]]
 if.app-id = 'com.openai.codex'
+run = 'move-node-to-workspace 2'
+
+# Claude is fixed globally (all machines) to workspace 2
+[[on-window-detected]]
+if.app-id = 'com.anthropic.claudefordesktop'
 run = 'move-node-to-workspace 2'
